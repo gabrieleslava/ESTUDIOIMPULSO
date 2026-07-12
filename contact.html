@@ -49,42 +49,53 @@
   <div class="grid md-grid-cols-12 gap-0" style="border: 1px solid var(--color-border-hover);">
 
     <!-- Form (8 cols) -->
-    <form class="md-col-span-8 p-lg space-y-lg" id="contact-form" action="https://formspree.io/f/FORMSPREE_FORM_ID" method="POST" style="background: var(--color-bg); border-right: 1px solid var(--color-border-hover);">
+    <form class="md-col-span-8 p-lg space-y-lg" id="contact-form" action="https://formspree.io/f/xojgazay" method="POST" style="background: var(--color-bg); border-right: 1px solid var(--color-border-hover);">
       <div class="grid md-grid-cols-2 gap-lg">
         <div>
           <label class="form-label">Nome Completo</label>
-          <input class="input-field input-field-light" type="text" name="nome" placeholder="" required>
+          <input class="input-field input-field-light" type="text" name="nome" data-fs-field placeholder="" required>
+          <span data-fs-error="nome" class="font-body-sm text-error" style="margin-top: 4px; display: block;"></span>
         </div>
         <div>
           <label class="form-label">E-mail Corporativo</label>
-          <input class="input-field input-field-light" type="email" name="email" placeholder="" required>
+          <input class="input-field input-field-light" type="email" name="email" data-fs-field placeholder="" required>
+          <span data-fs-error="email" class="font-body-sm text-error" style="margin-top: 4px; display: block;"></span>
         </div>
       </div>
       <div class="grid md-grid-cols-2 gap-lg">
         <div>
           <label class="form-label">Nome da Startup / Website</label>
-          <input class="input-field" type="text" name="startup" placeholder="">
+          <input class="input-field" type="text" name="startup" data-fs-field placeholder="">
+          <span data-fs-error="startup" class="font-body-sm text-error" style="margin-top: 4px; display: block;"></span>
         </div>
         <div>
           <label class="form-label">Tamanho da empresa</label>
-          <select class="input-field cursor-pointer" name="tamanho">
+          <select class="input-field cursor-pointer" name="tamanho" data-fs-field>
             <option value="1-10">1-10 colaboradores</option>
             <option value="11-50">11-50 colaboradores</option>
             <option value="51-200">51-200 colaboradores</option>
             <option value="201-500">201-500 colaboradores</option>
             <option value="500+">500+ colaboradores</option>
           </select>
+          <span data-fs-error="tamanho" class="font-body-sm text-error" style="margin-top: 4px; display: block;"></span>
         </div>
       </div>
       <div>
         <label class="form-label">Como podemos ajudar?</label>
-        <textarea class="input-field resize-none h-32" name="mensagem" placeholder="Conte-nos um pouco sobre seu projeto e objetivos..." required rows="6"></textarea>
+        <textarea class="input-field resize-none h-32" name="mensagem" data-fs-field placeholder="Conte-nos um pouco sobre seu projeto e objetivos..." required rows="6"></textarea>
+        <span data-fs-error="mensagem" class="font-body-sm text-error" style="margin-top: 4px; display: block;"></span>
       </div>
       <div class="pt-md">
-        <button class="btn-primary w-full md-w-auto" type="submit" style="border-radius: 2px;">
+        <button class="btn-primary w-full md-w-auto" type="submit" data-fs-submit-btn style="border-radius: 2px;">
           Enviar Mensagem
           <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
         </button>
+      </div>
+      <div data-fs-success class="bento-card-dark p-md font-body-md text-primary" style="display: none; border-color: #22c55e;">
+        <span class="material-symbols-outlined" style="color: #22c55e; font-size: 20px;">check_circle</span> Mensagem enviada com sucesso! Retornaremos em até 24h.
+      </div>
+      <div data-fs-error class="bento-card-dark p-md font-body-md text-error" style="display: none;">
+        <span class="material-symbols-outlined" style="font-size: 20px;">error</span> Erro ao enviar. Tente novamente.
       </div>
     </form>
 
@@ -153,6 +164,7 @@
   </div>
 </footer>
 
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 <script src="js/main.js"></script>
 </body>
 </html>
