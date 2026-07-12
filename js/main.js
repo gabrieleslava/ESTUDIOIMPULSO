@@ -1,6 +1,7 @@
 /* === ESTUDIO_IMPULSO | Shared JavaScript === */
 
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('main.js loaded');
   setActiveNavLink();
   initSmoothScroll();
   initRevealAnimations();
@@ -52,13 +53,16 @@ function initRevealAnimations() {
 
 function initContactForm() {
   var form = document.getElementById('contact-form');
+  console.log('initContactForm - form found:', !!form);
   if (!form) return;
 
   var btn = form.querySelector('[type="submit"]');
+  console.log('initContactForm - btn found:', !!btn);
   if (!btn) return;
   var originalHTML = btn.innerHTML;
 
   form.addEventListener('submit', function(e) {
+    console.log('form submit triggered');
     e.preventDefault();
     btn.innerHTML = '<span class="spinner"></span> Enviando...';
     btn.style.pointerEvents = 'none';
@@ -69,7 +73,9 @@ function initContactForm() {
       headers: { 'Accept': 'application/json' }
     })
     .then(function(res) {
+      console.log('fetch response:', res.status);
       if (res.ok) {
+        console.log('success!');
         btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
         btn.style.background = '#22c55e';
         btn.style.color = '#ffffff';
