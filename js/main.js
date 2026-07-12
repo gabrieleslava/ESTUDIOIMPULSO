@@ -54,39 +54,41 @@ function initContactForm() {
   var form = document.getElementById('contact-form');
   if (!form) return;
 
-  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
-  formspree('initForm', { formElement: '#contact-form', formId: 'xojgazay' });
-
-  var btn = form.querySelector('[data-fs-submit-btn]');
+  var btn = form.querySelector('[type="submit"]');
   if (!btn) return;
   var originalHTML = btn.innerHTML;
 
-  form.addEventListener('submit', function() {
-    console.log('submit event fired');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
     btn.innerHTML = '<span class="spinner"></span> Enviando...';
     btn.style.pointerEvents = 'none';
-  });
 
-  document.addEventListener('fs:submit', function(e) {
-    console.log('fs:submit event:', e);
-    btn.innerHTML = '<span class="spinner"></span> Enviando...';
-    btn.style.pointerEvents = 'none';
-  });
-
-  document.addEventListener('fs:success', function(e) {
-    console.log('fs:success event:', e);
-    btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
-    btn.style.background = '#22c55e';
-    btn.style.color = '#ffffff';
-    btn.style.pointerEvents = 'auto';
-  });
-
-  document.addEventListener('fs:error', function(e) {
-    console.log('fs:error event:', e);
-    btn.innerHTML = originalHTML;
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.style.pointerEvents = 'auto';
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(res) {
+      if (res.ok) {
+        btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
+        btn.style.background = '#22c55e';
+        btn.style.color = '#ffffff';
+        btn.style.pointerEvents = 'auto';
+        form.reset();
+        var successDiv = form.querySelector('[data-fs-success]');
+        if (successDiv) successDiv.style.display = 'block';
+      } else {
+        throw new Error('Erro no envio');
+      }
+    })
+    .catch(function() {
+      btn.innerHTML = originalHTML;
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.pointerEvents = 'auto';
+      var errorDiv = form.querySelector('[data-fs-error]');
+      if (errorDiv) errorDiv.style.display = 'block';
+    });
   });
 }
 
