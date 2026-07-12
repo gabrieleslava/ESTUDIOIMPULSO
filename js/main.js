@@ -58,33 +58,36 @@ function initContactForm() {
   formspree('initForm', { formElement: '#contact-form', formId: 'xojgazay' });
 
   var btn = form.querySelector('[data-fs-submit-btn]');
+  if (!btn) return;
   var originalHTML = btn.innerHTML;
 
   form.addEventListener('submit', function() {
+    console.log('submit event fired');
     btn.innerHTML = '<span class="spinner"></span> Enviando...';
     btn.style.pointerEvents = 'none';
   });
 
-  var successDiv = form.querySelector('[data-fs-success]');
-  var errorDiv = form.querySelector('[data-fs-error]');
-
-  var observer = new MutationObserver(function() {
-    if (successDiv.style.display !== 'none') {
-      btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
-      btn.style.background = '#22c55e';
-      btn.style.color = '#ffffff';
-      btn.style.pointerEvents = 'auto';
-    }
-    if (errorDiv.style.display !== 'none') {
-      btn.innerHTML = originalHTML;
-      btn.style.background = '';
-      btn.style.color = '';
-      btn.style.pointerEvents = 'auto';
-    }
+  document.addEventListener('fs:submit', function(e) {
+    console.log('fs:submit event:', e);
+    btn.innerHTML = '<span class="spinner"></span> Enviando...';
+    btn.style.pointerEvents = 'none';
   });
 
-  observer.observe(successDiv, { attributes: true, attributeFilter: ['style'] });
-  observer.observe(errorDiv, { attributes: true, attributeFilter: ['style'] });
+  document.addEventListener('fs:success', function(e) {
+    console.log('fs:success event:', e);
+    btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
+    btn.style.background = '#22c55e';
+    btn.style.color = '#ffffff';
+    btn.style.pointerEvents = 'auto';
+  });
+
+  document.addEventListener('fs:error', function(e) {
+    console.log('fs:error event:', e);
+    btn.innerHTML = originalHTML;
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.pointerEvents = 'auto';
+  });
 }
 
 /* Portfolio card mouse tracking */
