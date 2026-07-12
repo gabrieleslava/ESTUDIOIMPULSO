@@ -60,24 +60,31 @@ function initContactForm() {
   var btn = form.querySelector('[data-fs-submit-btn]');
   var originalHTML = btn.innerHTML;
 
-  form.addEventListener('fs:submit', function() {
+  form.addEventListener('submit', function() {
     btn.innerHTML = '<span class="spinner"></span> Enviando...';
     btn.style.pointerEvents = 'none';
   });
 
-  form.addEventListener('fs:success', function() {
-    btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
-    btn.style.background = '#22c55e';
-    btn.style.color = '#ffffff';
-    btn.style.pointerEvents = 'auto';
+  var successDiv = form.querySelector('[data-fs-success]');
+  var errorDiv = form.querySelector('[data-fs-error]');
+
+  var observer = new MutationObserver(function() {
+    if (successDiv.style.display !== 'none') {
+      btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
+      btn.style.background = '#22c55e';
+      btn.style.color = '#ffffff';
+      btn.style.pointerEvents = 'auto';
+    }
+    if (errorDiv.style.display !== 'none') {
+      btn.innerHTML = originalHTML;
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.pointerEvents = 'auto';
+    }
   });
 
-  form.addEventListener('fs:error', function() {
-    btn.innerHTML = originalHTML;
-    btn.style.background = '';
-    btn.style.color = '';
-    btn.style.pointerEvents = 'auto';
-  });
+  observer.observe(successDiv, { attributes: true, attributeFilter: ['style'] });
+  observer.observe(errorDiv, { attributes: true, attributeFilter: ['style'] });
 }
 
 /* Portfolio card mouse tracking */
