@@ -35,7 +35,7 @@ Site estático do Estúdio Impulso — estúdio de validação de produto para t
 7. Links do header: Home → `index.html`, Portfólio → `portfolio.html`, Contato → `contact.html`
 
 ### Branches e deploy
-- Repositório: `gabrieleslava/STUDIO_PHANTOM`
+- Repositório: `gabrieleslava/ESTUDIOIMPULSO`
 - Branch principal: `main`
 - Deploy automático via GitHub Pages (root `/`)
 - Domínio: `estudioimpulso.com.br`

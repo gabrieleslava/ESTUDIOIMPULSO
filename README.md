@@ -72,7 +72,7 @@ Site estático de 4 páginas para o Estúdio Impulso, estúdio de validação pa
 - Feedback visual: mensagem de sucesso (verde) ou erro (vermelho) inline
 
 ## Deploy
-- Repositório: `gabrieleslava/STUDIO_PHANTOM`
+- Repositório: `gabrieleslava/ESTUDIOIMPULSO`
 - Branch: `main`
 - GitHub Pages: root `/`
 - Domínio: `estudioimpulso.com.br`
