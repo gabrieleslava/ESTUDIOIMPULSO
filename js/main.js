@@ -1,4 +1,4 @@
-/* === STUDIO_PHANTOM | Shared JavaScript === */
+/* === ESTUDIO_IMPULSO | Shared JavaScript === */
 
 document.addEventListener('DOMContentLoaded', function() {
   setActiveNavLink();
