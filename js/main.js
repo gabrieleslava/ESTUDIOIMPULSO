@@ -56,6 +56,28 @@ function initContactForm() {
 
   window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
   formspree('initForm', { formElement: '#contact-form', formId: 'xojgazay' });
+
+  var btn = form.querySelector('[data-fs-submit-btn]');
+  var originalHTML = btn.innerHTML;
+
+  form.addEventListener('fs:submit', function() {
+    btn.innerHTML = '<span class="spinner"></span> Enviando...';
+    btn.style.pointerEvents = 'none';
+  });
+
+  form.addEventListener('fs:success', function() {
+    btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Mensagem Enviada!';
+    btn.style.background = '#22c55e';
+    btn.style.color = '#ffffff';
+    btn.style.pointerEvents = 'auto';
+  });
+
+  form.addEventListener('fs:error', function() {
+    btn.innerHTML = originalHTML;
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.pointerEvents = 'auto';
+  });
 }
 
 /* Portfolio card mouse tracking */
