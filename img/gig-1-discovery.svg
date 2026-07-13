@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="769" viewBox="0 0 1280 769">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0.15"/>
+    </linearGradient>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#22c55e" stroke-width="0.4" opacity="0.06"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="769" fill="#09090b"/>
+  <rect width="1280" height="769" fill="url(#g1)"/>
+  <rect width="1280" height="769" fill="url(#grid)"/>
+  <text x="1160" y="280" text-anchor="end" font-family="Geist, Inter, sans-serif" font-weight="700" font-size="56" fill="#ffffff" letter-spacing="3">QUALITATIVE RESEARCH</text>
+  <text x="1160" y="340" text-anchor="end" font-family="Geist, Inter, sans-serif" font-weight="700" font-size="56" fill="#22c55e" letter-spacing="3">IN 3 DAYS</text>
+  <rect x="1060" y="365" width="100" height="3" fill="#22c55e" opacity="0.9"/>
+  <text x="1160" y="430" text-anchor="end" font-family="Geist, Inter, sans-serif" font-weight="400" font-size="22" fill="#c4c7c8" letter-spacing="1.5">User interviews · Pain mapping · Discovery Report</text>
+  <text x="60" y="700" font-family="Geist Mono, monospace" font-weight="400" font-size="14" fill="#c4c7c8" letter-spacing="2">ESTUDIO_IMPULSO</text>
+  <line x1="60" y1="715" x2="220" y2="715" stroke="#22c55e" stroke-width="1" opacity="0.6"/>
+</svg>

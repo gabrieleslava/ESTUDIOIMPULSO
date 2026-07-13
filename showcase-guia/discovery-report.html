@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Discovery Report — guIA | ESTUDIO_IMPULSO</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* === DOCUMENT-SPECIFIC OVERRIDES === */
+    .report-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--color-bg);
+    }
+
+    .report-cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 48px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--color-outline-variant);
+    }
+
+    .report-cover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(#18181b 1px, transparent 1px);
+      background-size: 24px 24px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .report-section {
+      padding: 64px 48px;
+      border-bottom: 1px solid var(--color-outline-variant);
+      page-break-inside: avoid;
+    }
+
+    .report-section:last-child {
+      border-bottom: none;
+    }
+
+    .report-header-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      position: sticky;
+      top: 64px;
+      z-index: 20;
+    }
+
+    .page-marker {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--color-outline);
+      letter-spacing: 0.1em;
+    }
+
+    /* Tables */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Geist', sans-serif;
+      font-size: 14px;
+    }
+
+    .report-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-on-surface-variant);
+      border-bottom: 2px solid var(--color-outline-variant);
+      background: var(--color-surface-container-low);
+    }
+
+    .report-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      color: var(--color-on-surface);
+      line-height: 1.5;
+    }
+
+    .report-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .report-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    /* Severity badges */
+    .sev-critical {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(255,180,171,0.15);
+      color: var(--color-error);
+      border: 1px solid rgba(255,180,171,0.3);
+    }
+
+    .sev-high {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(251,191,36,0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(251,191,36,0.3);
+    }
+
+    .sev-medium {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(59,130,246,0.15);
+      color: var(--color-accent);
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    /* Quote block */
+    .report-quote {
+      border-left: 3px solid var(--color-primary);
+      padding: 16px 24px;
+      margin: 24px 0;
+      background: var(--color-surface-container-low);
+    }
+
+    .report-quote blockquote {
+      margin: 0;
+      font-family: 'Geist', sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--color-primary);
+      font-weight: 400;
+    }
+
+    .report-quote .quote-attrib {
+      font-size: 13px;
+      color: var(--color-on-surface-variant);
+      margin-top: 8px;
+    }
+
+    /* Competitor card */
+    .competitor-card {
+      border: 1px solid var(--color-border-subtle);
+      background: var(--color-surface-container-low);
+      padding: 24px;
+      transition: border-color 150ms ease;
+    }
+
+    .competitor-card:hover {
+      border-color: var(--color-border-hover);
+    }
+
+    /* Hypothesis block */
+    .hypothesis-block {
+      border: 1px solid var(--color-border-subtle);
+      padding: 24px;
+      margin-bottom: 16px;
+      background: var(--color-surface-container-low);
+    }
+
+    .hypothesis-block .hyp-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--color-outline);
+    }
+
+    /* Page footer strip */
+    .report-page-footer {
+      padding: 24px 48px;
+      border-top: 1px solid var(--color-outline-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--color-outline);
+    }
+
+    /* Print button */
+    .print-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+
+    /* === PRINT STYLES === */
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .site-nav, .print-bar, .report-header-strip { display: none !important; }
+      .report-cover { min-height: auto; padding: 60px 40px; page-break-after: always; }
+      .report-wrapper { max-width: 100%; }
+      .report-section { padding: 40px; }
+      .report-cover::after { opacity: 0.1; }
+      .report-quote { background: #f5f5f5; }
+      .competitor-card, .hypothesis-block, .bento-card { border-color: #ddd; }
+      .report-table th { background: #f0f0f0; }
+      :root {
+        --color-bg: #fff;
+        --color-surface: #fafafa;
+        --color-surface-container-low: #f5f5f5;
+        --color-primary: #000;
+        --color-on-surface: #111;
+        --color-on-surface-variant: #555;
+        --color-outline: #999;
+        --color-outline-variant: #ddd;
+        --color-border-subtle: #e0e0e0;
+        --color-border-hover: #ccc;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .report-cover { padding: 60px 24px; }
+      .report-section { padding: 40px 24px; }
+      .report-header-strip { padding: 12px 24px; }
+      .report-page-footer { padding: 16px 24px; flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body class="bg-dim">
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-brand">ESTUDIO_IMPULSO</a>
+    <div class="nav-links">
+      <a href="../index.html" class="nav-link">Home</a>
+      <a href="../portfolio/" class="nav-link">Portfólio</a>
+      <a href="../contato/" class="nav-link">Contato</a>
+    </div>
+    <a href="../contato/" class="btn-primary">Fale conosco</a>
+  </div>
+</nav>
+
+<div class="print-bar">
+  <button onclick="window.print()" class="btn-primary" style="border-radius: 2px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+    <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
+    Exportar PDF
+  </button>
+</div>
+
+<main class="report-wrapper">
+
+  <!-- ========== COVER ========== -->
+  <section class="report-cover">
+    <div style="position: relative; z-index: 1;">
+      <div class="badge mb-lg">
+        <span class="status-dot status-dot-accent"></span>
+        <span class="font-label-caps text-on-surface-variant uppercase tracking-widest">DISCOVERY REPORT — PHASE 01</span>
+      </div>
+
+      <h1 class="font-display-lg md-text-display-lg text-primary tracking-tighter mb-lg" style="line-height: 1.05; max-width: 720px;">
+        guIA — Otimização Inteligente de Rotas para Entregas Urbanas
+      </h1>
+
+      <p class="font-body-md md-text-lg text-on-surface-variant max-w-2xl leading-relaxed mb-xl">
+        Documento de descoberta do produto: pesquisa qualitativa, análise competitiva e hipóteses priorizadas para validação. Entregável da Fase 1 do Método Impulso.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 48px;">
+        <div>
+          <span class="form-label" style="margin-bottom: 4px;">CLIENTE</span>
+          <p class="font-body-md text-primary font-medium">LogTech Soluções S.A.</p>
+        </div>
+        <div>
+          <span class="form-label" style="margin-bottom: 4px;">DATA DE ENTREGA</span>
+          <p class="font-body-md text-primary font-medium">12 de Março, 2026</p>
+        </div>
+        <div>
+          <span class="form-label" style="margin-bottom: 4px;">CLASSIFICAÇÃO</span>
+          <p class="font-body-md text-primary font-medium">Confidencial — NDA Ativo</p>
+        </div>
+        <div>
+          <span class="form-label" style="margin-bottom: 4px;">VERSÃO</span>
+          <p class="font-body-md text-primary font-medium">v1.0 — Final</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 64px;">
+        <div class="flex items-center gap-sm">
+          <span class="font-label-caps text-outline">PREPARADO POR</span>
+          <div style="width: 48px; height: 1px; background: var(--color-outline-variant);"></div>
+          <span class="font-body-md text-primary font-medium">ESTUDIO_IMPULSO — Estúdio de Validação</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== HEADER STRIP ========== -->
+  <div class="report-header-strip">
+    <span class="font-label-caps text-primary">DISCOVERY REPORT</span>
+    <span class="page-marker">guIA · LOGTECH S.A. · CONFIDENCIAL</span>
+  </div>
+
+  <!-- ========== EXECUTIVE SUMMARY ========== -->
+  <section class="report-section">
+    <div class="section-divider mb-lg">
+      <span class="font-mono-code text-on-surface-variant tracking-widest uppercase">RESUMO EXECUTIVO</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
+      <div>
+        <p class="font-body-md text-on-surface leading-relaxed mb-md">
+          <strong class="text-primary">A LogTech Soluções opera uma frota de 340 entregadores</strong> que realizam em média 2.100 entregas/dia na região metropolitana de São Paulo. O roteamento atual depende de planilhas estáticas e conhecimento tácito dos motoristas mais experientes — um processo que gera ineficiência estimada em <strong class="text-primary">18-22% de quilometragem excedente</strong> e atrasos recorrentes em 31% das entregas.
+        </p>
+        <p class="font-body-md text-on-surface leading-relaxed mb-md">
+          Realizamos <strong class="text-primary">5 entrevistas em profundidade</strong> com motoristas e supervisores de logística, analisamos <strong class="text-primary">4 concorrentes diretos</strong> e mapeamos o fluxo operacional completo. Os achados indicam que o problema não é apenas técnico (algoritmo de rota) — é também <strong class="text-primary">cognitivo e situacional</strong>: os motoristas precisam tomar microdecisões em tempo real (trânsito, cliente ausente, restrições de horário) que sistemas puramente algorítmicos não resolvem.
+        </p>
+
+        <div class="bento-card space-y-md" style="margin-top: 32px;">
+          <h4 class="font-label-caps text-primary">PRINCIPAIS ACHADOS</h4>
+          <div class="space-y-sm">
+            <div class="flex gap-md">
+              <span class="material-symbols-outlined text-error" style="font-size: 18px; flex-shrink: 0;">error</span>
+              <p class="font-body-sm text-on-surface-variant leading-relaxed"><strong class="text-primary">73% do conhecimento de roteirização é tácito</strong> — está na cabeça de 4 motoristas seniores. Se um deles falta, a operação desacelera visivelmente.</p>
+            </div>
+            <div class="flex gap-md">
+              <span class="material-symbols-outlined" style="font-size: 18px; flex-shrink: 0; color: #fbbf24;">warning</span>
+              <p class="font-body-sm text-on-surface-variant leading-relaxed"><strong class="text-primary">O maior atrito não é traçar a rota, é reagir a imprevistos.</strong> Cliente ausente, trânsito, endereço incorreto — essas microdecisões consomem 40% do tempo de entrega.</p>
+            </div>
+            <div class="flex gap-md">
+              <span class="material-symbols-outlined text-accent" style="font-size: 18px; flex-shrink: 0; color: var(--color-accent);">lightbulb</span>
+              <p class="font-body-sm text-on-surface-variant leading-relaxed"><strong class="text-primary">Ferramentas existentes ignoram o contexto do entregador.</strong> Waze e Google Maps otimizam para carro particular, não para rotas com múltiplas paradas, janelas de horário e restrições de veículo.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-md">
+        <div class="bento-card space-y-sm" style="background: var(--color-surface-container-lowest);">
+          <span class="font-label-caps text-outline">MÉTRICA DO PROBLEMA</span>
+          <span class="font-display-lg text-primary font-bold" style="font-size: 56px; line-height: 1;">22%</span>
+          <p class="font-body-sm text-on-surface-variant">Quilometragem excedente média por rota</p>
+        </div>
+
+        <div class="bento-card space-y-sm" style="background: var(--color-surface-container-lowest);">
+          <span class="font-label-caps text-outline">ENTREGAS ATRASADAS</span>
+          <span class="font-display-lg text-primary font-bold" style="font-size: 56px; line-height: 1;">31%</span>
+          <p class="font-body-sm text-on-surface-variant">Das entregas diárias com atraso &gt;30min</p>
+        </div>
+
+        <div class="bento-card space-y-sm" style="background: var(--color-surface-container-lowest);">
+          <span class="font-label-caps text-outline">ENTREVISTAS</span>
+          <span class="font-display-lg text-primary font-bold" style="font-size: 56px; line-height: 1;">5</span>
+          <p class="font-body-sm text-on-surface-variant">Motoristas e supervisores entrevistados</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 01 — STAKEHOLDER KICKOFF ========== -->
+  <section class="report-section">
+    <div class="section-divider mb-lg">
+      <span class="font-mono-code text-on-surface-variant tracking-widest uppercase">01 // STAKEHOLDER KICKOFF &mdash; 2H</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <p class="font-body-md text-on-surface-variant mb-lg max-w-2xl leading-relaxed">
+      Sessão de alinhamento realizada em 03/03/2026 com a liderança da LogTech. Participantes: Diretor de Operações, Head de Tecnologia e Supervisor de Frota. Objetivo: alinhar escopo do sprint, identificar as hipóteses mais arriscadas do negócio e definir o perfil do early adopter.
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+      <div class="bento-card space-y-sm">
+        <span class="form-label" style="font-size: 10px; color: var(--color-outline);">OPORTUNIDADE DE NEGÓCIO</span>
+        <p class="font-body-md text-primary leading-relaxed">Reduzir o custo operacional da última milha em pelo menos 15% automatizando o roteamento inteligente com capacidade de reagir a imprevistos em tempo real.</p>
+      </div>
+      <div class="bento-card space-y-sm">
+        <span class="form-label" style="font-size: 10px; color: var(--color-outline);">USUÁRIO-ALVO (EARLY ADOPTER)</span>
+        <p class="font-body-md text-primary leading-relaxed">Motoristas de entrega da própria LogTech com 1-3 anos de experiência — já conhecem as regiões, mas ainda não têm o conhecimento tácito dos seniores.</p>
+      </div>
+    </div>
+
+    <div class="bento-card space-y-lg" style="margin-bottom: 24px;">
+      <span class="form-label" style="font-size: 10px; color: var(--color-outline);">AS 3 HIPÓTESES MAIS ARRISCADAS (DEFINIDAS NO KICKOFF)</span>
+      <div class="space-y-md">
+        <div class="hypothesis-block" style="border-left: 3px solid var(--color-error);">
+          <div class="flex justify-between items-start mb-sm">
+            <span class="font-headline-lg text-primary" style="font-size: 18px;">H1 — Automação será adotada pelos motoristas</span>
+            <span class="sev-critical">RISCO ALTO</span>
+          </div>
+          <p class="font-body-sm text-on-surface-variant leading-relaxed">Os motoristas confiam mais em sua experiência pessoal do que em algoritmos. Se a ferramenta sugerir uma rota que "parece" errada para eles, a adoção será zero. <strong class="text-primary">Critério de validação:</strong> 80% dos motoristas seguem a rota sugerida sem override manual nos primeiros 3 dias de teste.</p>
+        </div>
+
+        <div class="hypothesis-block" style="border-left: 3px solid #fbbf24;">
+          <div class="flex justify-between items-start mb-sm">
+            <span class="font-headline-lg text-primary" style="font-size: 18px;">H2 — Otimização em tempo real é possível com dados disponíveis</span>
+            <span class="sev-high">RISCO MÉDIO-ALTO</span>
+          </div>
+          <p class="font-body-sm text-on-surface-variant leading-relaxed">A LogTech tem acesso a APIs de trânsito, mas os dados de restrições de entrega (horário comercial do cliente, portaria fechada) não estão estruturados. Sem esses dados, a otimização será teórica. <strong class="text-primary">Critério de validação:</strong> Conseguir modelar pelo menos 60% das restrições com os dados atuais.</p>
+        </div>
+
+        <div class="hypothesis-block" style="border-left: 3px solid var(--color-accent);">
+          <div class="flex justify-between items-start mb-sm">
+            <span class="font-headline-lg text-primary" style="font-size: 18px;">H3 — Interface mobile simples resolve o problema de adoção</span>
+            <span class="sev-medium">RISCO MÉDIO</span>
+          </div>
+          <p class="font-body-sm text-on-surface-variant leading-relaxed">Motoristas em trânsito não podem interagir com interfaces complexas. Acreditamos que uma tela com 3 ações principais (Ver Rota, Reportar Problema, Confirmar Entrega) é suficiente. <strong class="text-primary">Critério de validação:</strong> Motoristas completam o fluxo principal em &lt;15 segundos com uma mão, durante o teste de usabilidade.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-md p-lg bento-border" style="background: var(--color-surface-container-lowest);">
+      <span class="material-symbols-outlined text-accent" style="font-size: 20px; flex-shrink: 0;">checklist</span>
+      <p class="font-body-sm text-on-surface-variant"><strong class="text-primary">Decisão do kickoff:</strong> O sprint de 14 dias focará exclusivamente no fluxo de roteirização matinal + reação a 2 tipos de imprevistos (cliente ausente e trânsito). Onboarding, relatórios e gestão de frota ficam para versões futuras.</p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 02 — USER INTERVIEWS ========== -->
+  <section class="report-section">
+    <div class="section-divider mb-lg">
+      <span class="font-mono-code text-on-surface-variant tracking-widest uppercase">02 // USER INTERVIEWS &mdash; 5 SESSÕES · 30-45 MIN</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <p class="font-body-md text-on-surface-variant mb-lg max-w-2xl leading-relaxed">
+      Entrevistas em profundidade com 5 profissionais da LogTech: 3 motoristas (júnior, pleno, sênior) e 2 supervisores de logística. Todas as sessões foram conduzidas presencialmente no centro de distribuição, com foco exclusivo em entender o problema atual — <strong class="text-primary">em nenhum momento mencionamos a solução proposta.</strong>
+    </p>
+
+    <!-- Persona Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 40px;">
+      <div class="bento-card space-y-md">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-sm">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface-container-high); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined text-primary">person</span>
+            </div>
+            <div>
+              <p class="font-body-md text-primary font-medium" style="line-height: 1.2;">Carlos M.</p>
+              <p class="font-label-caps text-outline">Motorista · 7 anos</p>
+            </div>
+          </div>
+          <span class="tag">SÊNIOR</span>
+        </div>
+        <div class="report-quote" style="margin: 0;">
+          <blockquote>"Eu sei qual rua pegar porque já errei ela umas 50 vezes. Isso não tá em lugar nenhum."</blockquote>
+          <div class="quote-attrib">— Carlos, sobre conhecimento tácito</div>
+        </div>
+        <p class="font-body-sm text-on-surface-variant"><strong class="text-primary">Principal dor:</strong> Iniciantes repetem os mesmos erros que ele cometeu há 7 anos. Não há transferência de conhecimento.</p>
+      </div>
+
+      <div class="bento-card space-y-md">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-sm">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface-container-high); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined text-primary">person</span>
+            </div>
+            <div>
+              <p class="font-body-md text-primary font-medium" style="line-height: 1.2;">Amanda R.</p>
+              <p class="font-label-caps text-outline">Motorista · 2 anos</p>
+            </div>
+          </div>
+          <span class="tag">PLENO</span>
+        </div>
+        <div class="report-quote" style="margin: 0;">
+          <blockquote>"O GPS me manda pra Marginal Tietê às 17h. Ele não sabe que aquele caminho é morte."</blockquote>
+          <div class="quote-attrib">— Amanda, sobre ferramentas atuais</div>
+        </div>
+        <p class="font-body-sm text-on-surface-variant"><strong class="text-primary">Principal dor:</strong> Sente que está "no escuro" em 40% das entregas. Ferramentas atuais são genéricas e não consideram restrições reais.</p>
+      </div>
+
+      <div class="bento-card space-y-md">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-sm">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface-container-high); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined text-primary">person</span>
+            </div>
+            <div>
+              <p class="font-body-md text-primary font-medium" style="line-height: 1.2;">Lucas F.</p>
+              <p class="font-label-caps text-outline">Motorista · 8 meses</p>
+            </div>
+          </div>
+          <span class="tag">JÚNIOR</span>
+        </div>
+        <div class="report-quote" style="margin: 0;">
+          <blockquote>"No primeiro mês eu voltava pro CD umas 3 vezes por dia pra perguntar onde entregar."</blockquote>
+          <div class="quote-attrib">— Lucas, sobre onboarding</div>
+        </div>
+        <p class="font-body-sm text-on-surface-variant"><strong class="text-primary">Principal dor:</strong> Curva de aprendizado brutal. Depende 100% de ajuda dos seniores e da sorte.</p>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+      <div class="bento-card space-y-md">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-sm">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface-container-high); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined text-primary">badge</span>
+            </div>
+            <div>
+              <p class="font-body-md text-primary font-medium" style="line-height: 1.2;">Patrícia S.</p>
+              <p class="font-label-caps text-outline">Supervisora · 5 anos</p>
+            </div>
+          </div>
+          <span class="tag">SUPERVISÃO</span>
+        </div>
+        <div class="report-quote" style="margin: 0;">
+          <blockquote>"Todo dia eu recebo umas 15 ligações de motorista perguntando 'e agora?'. Isso devia estar resolvido no app."</blockquote>
+          <div class="quote-attrib">— Patrícia, sobre microgestão</div>
+        </div>
+        <p class="font-body-sm text-on-surface-variant"><strong class="text-primary">Principal dor:</strong> Gasta 60% do tempo apagando incêndio. Se o app desse autonomia ao motorista, ela focaria em otimização estratégica.</p>
+      </div>
+
+      <div class="bento-card space-y-md">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-sm">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-surface-container-high); display: flex; align-items: center; justify-content: center;">
+              <span class="material-symbols-outlined text-primary">analytics</span>
+            </div>
+            <div>
+              <p class="font-body-md text-primary font-medium" style="line-height: 1.2;">Ricardo T.</p>
+              <p class="font-label-caps text-outline">Head de Tecnologia · 3 anos</p>
+            </div>
+          </div>
+          <span class="tag">TECNOLOGIA</span>
+        </div>
+        <div class="report-quote" style="margin: 0;">
+          <blockquote>"Nós temos os dados de todas as entregas dos últimos 3 anos. Eles estão num banco SQL que ninguém nunca analisou."</blockquote>
+          <div class="quote-attrib">— Ricardo, sobre dados subutilizados</div>
+        </div>
+        <p class="font-body-sm text-on-surface-variant"><strong class="text-primary">Principal dor:</strong> Tem infraestrutura de dados mas não tem produto. O gap entre dado bruto e ferramenta utilizável é enorme.</p>
+      </div>
+    </div>
+
+    <div class="mt-xl">
+      <span class="form-label" style="margin-bottom: 16px;">PADRÕES IDENTIFICADOS (SÍNTESE DAS 5 ENTREVISTAS)</span>
+      <div class="space-y-sm">
+        <div class="flex gap-md p-lg bento-border" style="background: var(--color-surface-container-low);">
+          <span class="material-symbols-outlined text-primary mt-1" style="font-size: 20px; flex-shrink: 0;">looks_one</span>
+          <div>
+            <p class="font-body-md text-primary font-medium">Conhecimento tácito é o principal ativo e o maior risco</p>
+            <p class="font-body-sm text-on-surface-variant leading-relaxed">100% dos entrevistados mencionaram que "saber a rota certa" depende de experiência pessoal. Isso cria dependência de pessoas-chave e torna a operação frágil.</p>
+          </div>
+        </div>
+        <div class="flex gap-md p-lg bento-border" style="background: var(--color-surface-container-low);">
+          <span class="material-symbols-outlined text-primary mt-1" style="font-size: 20px; flex-shrink: 0;">looks_two</span>
+          <div>
+            <p class="font-body-md text-primary font-medium">O "problema" não é a rota em si — é reagir ao inesperado</p>
+            <p class="font-body-sm text-on-surface-variant leading-relaxed">80% dos entrevistados disseram que planejar a rota é fácil. O difícil é quando o cliente não atende, o trânsito trava ou o endereço está errado. A ferramenta precisa ajudar na exceção, não na regra.</p>
+          </div>
+        </div>
+        <div class="flex gap-md p-lg bento-border" style="background: var(--color-surface-container-low);">
+          <span class="material-symbols-outlined text-primary mt-1" style="font-size: 20px; flex-shrink: 0;">looks_3</span>
+          <div>
+            <p class="font-body-md text-primary font-medium">Interface precisa ser operável com uma mão e zero distração</p>
+            <p class="font-body-sm text-on-surface-variant leading-relaxed">Motoristas interagem com o dispositivo enquanto dirigem (contexto de atenção dividida). Qualquer interface que exija mais de 2 toques ou leitura prolongada será ignorada na prática.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 03 — COMPETITIVE ANALYSIS ========== -->
+  <section class="report-section">
+    <div class="section-divider mb-lg">
+      <span class="font-mono-code text-on-surface-variant tracking-widest uppercase">03 // COMPETITIVE ANALYSIS &mdash; 2-3H</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <p class="font-body-md text-on-surface-variant mb-lg max-w-2xl leading-relaxed">
+      Analisamos 4 soluções disponíveis no mercado brasileiro de roteirização. Nenhuma resolve completamente o problema da LogTech — todas têm lacunas específicas que representam oportunidade de diferenciação.
+    </p>
+
+    <div style="overflow-x: auto; margin-bottom: 32px;">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Solução</th>
+            <th>Pontos Fortes</th>
+            <th>Onde Falha</th>
+            <th>Modelo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-body-md text-primary font-semibold">RoutEasy</td>
+            <td>Algoritmo robusto de otimização, API de integração com ERPs, relatórios de performance</td>
+            <td>Interface complexa, voltada para o gestor (desktop). Não tem app mobile funcional para o motorista. Ignora a experiência do entregador.</td>
+            <td><span class="tag">SaaS · R$ 1.200/mês</span></td>
+          </tr>
+          <tr>
+            <td class="font-body-md text-primary font-semibold">Drivin</td>
+            <td>App mobile bem avaliado, tracking em tempo real, boa UX para o motorista</td>
+            <td>Pouca flexibilidade nas restrições de entrega (janelas de horário fixas, sem suporte a "cliente ausente" ou reprogramação). Falta personalização por setor.</td>
+            <td><span class="tag">SaaS · R$ 890/mês</span></td>
+          </tr>
+          <tr>
+            <td class="font-body-md text-primary font-semibold">Google Maps / Waze</td>
+            <td>Gratuito, dados de trânsito em tempo real imbatíveis, Todo mundo já sabe usar</td>
+            <td>Otimiza para 1 destino por vez. Não considera múltiplas paradas, janelas de horário, restrições de veículo ou prioridades de entrega. Zero personalização logística.</td>
+            <td><span class="tag">Gratuito</span></td>
+          </tr>
+          <tr>
+            <td class="font-body-md text-primary font-semibold">Planilha + WhatsApp (atual)</td>
+            <td>Flexível, sem custo de licenciamento, adaptável a qualquer mudança de processo</td>
+            <td>Zero automação, depende 100% de conhecimento tácito, não escala, erros de digitação geram retrabalho. Custo real estimado em 22% de ineficiência logística.</td>
+            <td><span class="tag">Caseiro · Custo oculto</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bento-card space-y-md" style="background: var(--color-surface-container-lowest); border-color: var(--color-border-hover);">
+      <div class="flex items-center gap-sm">
+        <span class="material-symbols-outlined text-accent" style="font-size: 20px;">target</span>
+        <span class="font-headline-lg text-primary" style="font-size: 18px;">Oportunidade de Diferenciação (GAP)</span>
+      </div>
+      <p class="font-body-md text-on-surface leading-relaxed">
+        Nenhum concorrente combina <strong class="text-primary">algoritmo de otimização + app mobile simples + reação a imprevistos em tempo real</strong>. A oportunidade da LogTech está em unir o melhor dos dois mundos: a potência do algoritmo (RoutEasy) com a usabilidade e simplicidade para o motorista (Drivin), adicionando a camada que ninguém tem: <strong class="text-primary">reação inteligente a imprevistos</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 04 — DISCOVERY SYNTHESIS ========== -->
+  <section class="report-section" style="border-bottom: none;">
+    <div class="section-divider mb-lg">
+      <span class="font-mono-code text-on-surface-variant tracking-widest uppercase">04 // DISCOVERY SYNTHESIS &mdash; 4H</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <p class="font-body-md text-on-surface-variant mb-lg max-w-2xl leading-relaxed">
+      Documento-síntese da Fase 1: persona consolidada, mapa de dores priorizadas e hipóteses refinadas para teste no protótipo. Este documento deve ser lido por todos os envolvidos antes do início da prototipação (Fase 2).
+    </p>
+
+    <!-- Pain Map -->
+    <div class="mb-xl">
+      <span class="form-label" style="margin-bottom: 16px;">MAPA DE DORES PRIORIZADAS</span>
+      <div style="overflow-x: auto;">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th>Dor Identificada</th>
+              <th style="width: 120px;">Frequência</th>
+              <th style="width: 120px;">Intensidade</th>
+              <th style="width: 100px;">Impacto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-mono-code text-primary">P01</td>
+              <td><strong class="text-primary">Dependência de conhecimento tácito</strong> — motoristas juniores não têm acesso ao conhecimento de rota dos seniores</td>
+              <td><span class="sev-critical">DIÁRIA</span></td>
+              <td><span class="sev-critical">ALTA</span></td>
+              <td><span class="sev-critical">CRÍTICO</span></td>
+            </tr>
+            <tr>
+              <td class="font-mono-code text-primary">P02</td>
+              <td><strong class="text-primary">Ferramentas ignoram imprevistos</strong> — GPS e planilhas não ajudam quando o plano muda no meio da rota</td>
+              <td><span class="sev-high">3-5x/DIA</span></td>
+              <td><span class="sev-critical">ALTA</span></td>
+              <td><span class="sev-critical">CRÍTICO</span></td>
+            </tr>
+            <tr>
+              <td class="font-mono-code text-primary">P03</td>
+              <td><strong class="text-primary">Interface inadequada para o contexto</strong> — apps atuais exigem atenção visual prolongada, incompatível com direção</td>
+              <td><span class="sev-critical">CONSTANTE</span></td>
+              <td><span class="sev-high">MÉDIA</span></td>
+              <td><span class="sev-high">ALTO</span></td>
+            </tr>
+            <tr>
+              <td class="font-mono-code text-primary">P04</td>
+              <td><strong class="text-primary">Sobrecarga da supervisão</strong> — supervisores gastam 60% do tempo resolvendo problemas que o app deveria resolver</td>
+              <td><span class="sev-high">HORÁRIA</span></td>
+              <td><span class="sev-high">MÉDIA</span></td>
+              <td><span class="sev-high">ALTO</span></td>
+            </tr>
+            <tr>
+              <td class="font-mono-code text-primary">P05</td>
+              <td><strong class="text-primary">Curva de aprendizado brutal</strong> — novos motoristas levam 4-6 meses para atingir produtividade aceitável</td>
+              <td><span class="sev-medium">POR CONTRATAÇÃO</span></td>
+              <td><span class="sev-high">MÉDIA</span></td>
+              <td><span class="sev-medium">MÉDIO</span></td>
+            </tr>
+            <tr>
+              <td class="font-mono-code text-primary">P06</td>
+              <td><strong class="text-primary">Dados subutilizados</strong> — 3 anos de histórico de entregas armazenados sem análise</td>
+              <td><span class="sev-medium">PERMANENTE</span></td>
+              <td><span class="sev-medium">BAIXA</span></td>
+              <td><span class="sev-medium">MÉDIO</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Persona Consolidada -->
+    <div class="bento-card space-y-lg mb-xl" style="background: var(--color-surface-container-lowest);">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-md">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-surface-container-high); display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-outline-variant);">
+            <span class="material-symbols-outlined text-primary" style="font-size: 28px;">person</span>
+          </div>
+          <div>
+            <span class="font-label-caps text-outline">PERSONA CONSOLIDADA</span>
+            <h3 class="font-headline-lg text-primary" style="font-size: 24px; margin-top: 4px;">O Motorista Conectado</h3>
+          </div>
+        </div>
+        <span class="tag">PRIMÁRIA</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+        <div class="space-y-sm">
+          <span class="font-label-caps text-outline" style="font-size: 10px;">DEMOGRAFIA</span>
+          <p class="font-body-sm text-on-surface leading-relaxed">Homens e mulheres, 22-45 anos. Motoristas de aplicativo ou entrega com 1-7 anos de experiência. Ensino médio completo. Renda mensal R$ 2.500-4.500.</p>
+        </div>
+        <div class="space-y-sm">
+          <span class="font-label-caps text-outline" style="font-size: 10px;">CONTEXTO DE USO</span>
+          <p class="font-body-sm text-on-surface leading-relaxed">Ao volante, 6-10h/dia. Atenção dividida entre trânsito, app de rota e comunicação com a central. Usa smartphone com suporte veicular. Uma mão livre para interagir com a tela.</p>
+        </div>
+        <div class="space-y-sm">
+          <span class="font-label-caps text-outline" style="font-size: 10px;">JOBS-TO-BE-DONE</span>
+          <p class="font-body-sm text-on-surface leading-relaxed">
+            1. <strong class="text-primary">Saber para onde ir agora</strong> sem precisar pensar<br>
+            2. <strong class="text-primary">Resolver imprevisto sozinho</strong> sem ligar para o supervisor<br>
+            3. <strong class="text-primary">Provar que entregou</strong> com mínimo esforço
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Refined Hypotheses for Prototype Testing -->
+    <div class="mb-lg">
+      <span class="form-label" style="margin-bottom: 16px;">HIPÓTESES REFINADAS PARA TESTE NO PROTÓTIPO</span>
+      <p class="font-body-sm text-on-surface-variant mb-md leading-relaxed">
+        As 3 hipóteses abaixo foram refinadas com base nos achados das entrevistas e análise competitiva. Elas guiarão o escopo do protótipo navegável (Fase 2) e serão testadas diretamente com usuários reais (Fase 3).
+      </p>
+    </div>
+
+    <div class="space-y-md mb-xl">
+      <div class="bento-card space-y-md" style="border-left: 3px solid var(--color-primary);">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-sm">
+            <span class="font-mono-code text-outline">H1</span>
+            <h4 class="font-headline-lg text-primary" style="font-size: 18px;">Motoristas confiam e seguem rota sugerida quando ela mostra o "porquê"</h4>
+          </div>
+          <span class="tag">HIPÓTESE</span>
+        </div>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">A resistência à adoção diminui se a interface mostrar o racional da rota (ex: "Evitamos a Marginal porque está congestionada — você chega 12 min mais cedo").</p>
+        <div class="flex items-center gap-sm">
+          <span class="font-label-caps text-outline" style="font-size: 10px;">CRITÉRIO DE SUCESSO:</span>
+          <p class="font-body-sm text-primary font-medium">≥ 4 de 5 motoristas declaram "confio nessa rota" no teste de usabilidade</p>
+        </div>
+      </div>
+
+      <div class="bento-card space-y-md" style="border-left: 3px solid var(--color-primary);">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-sm">
+            <span class="font-mono-code text-outline">H2</span>
+            <h4 class="font-headline-lg text-primary" style="font-size: 18px;">2 botões são suficientes para o motorista resolver 90% dos imprevistos</h4>
+          </div>
+          <span class="tag">HIPÓTESE</span>
+        </div>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">"Cliente Ausente" e "Trânsito/Desvio" cobrem a vasta maioria dos cenários. Não precisamos de um menu com 10 opções — precisamos de 2 ações rápidas e inteligentes.</p>
+        <div class="flex items-center gap-sm">
+          <span class="font-label-caps text-outline" style="font-size: 10px;">CRITÉRIO DE SUCESSO:</span>
+          <p class="font-body-sm text-primary font-medium">≥ 4 de 5 motoristas conseguem reportar e resolver um imprevisto em &lt;10 segundos</p>
+        </div>
+      </div>
+
+      <div class="bento-card space-y-md" style="border-left: 3px solid var(--color-primary);">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-sm">
+            <span class="font-mono-code text-outline">H3</span>
+            <h4 class="font-headline-lg text-primary" style="font-size: 18px;">O histórico de entregas passadas é o melhor preditor da rota futura</h4>
+          </div>
+          <span class="tag">HIPÓTESE</span>
+        </div>
+        <p class="font-body-sm text-on-surface-variant leading-relaxed">Em vez de depender apenas de algoritmo de otimização, usar os 3 anos de dados históricos da LogTech para sugerir rotas que já funcionaram na prática — combinando machine learning com o conhecimento tácito já registrado.</p>
+        <div class="flex items-center gap-sm">
+          <span class="font-label-caps text-outline" style="font-size: 10px;">CRITÉRIO DE SUCESSO:</span>
+          <p class="font-body-sm text-primary font-medium">Rota sugerida pelo histórico é igual ou melhor que a rota do motorista sênior em ≥ 70% dos casos simulados</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="bento-card space-y-md" style="background: var(--color-surface-container-lowest);">
+      <div class="flex items-center gap-sm">
+        <span class="material-symbols-outlined text-primary" style="font-size: 20px;">arrow_forward</span>
+        <span class="font-headline-lg text-primary" style="font-size: 18px;">PRÓXIMOS PASSOS — FASE 2</span>
+      </div>
+      <p class="font-body-md text-on-surface leading-relaxed">
+        Com base nos achados deste Discovery Report, a <strong class="text-primary">Fase 2 — Protótipo Navegável</strong> focará em 3 telas essenciais: (1) Tela de Rota Sugerida com justificativa, (2) Tela de Reporte de Imprevisto com 2 botões, (3) Tela de Confirmação de Entrega simplificada. O protótipo será desenvolvido em Figma com alta fidelidade e testado com 5 motoristas na Fase 3.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== REPORT PAGE FOOTER ========== -->
+  <div class="report-page-footer">
+    <span>ESTUDIO_IMPULSO — Discovery Report v1.0</span>
+    <span>guIA · LogTech S.A. · 12/03/2026 · Confidencial</span>
+    <span>Página gerada pelo Método Impulso</span>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner md-flex-row">
+    <div class="flex-1 flex justify-start">
+      <span class="footer-brand">ESTUDIO_IMPULSO</span>
+    </div>
+    <div class="flex-1 flex justify-center">
+      <span class="footer-copy">© 2026 ALL RIGHTS RESERVED.</span>
+    </div>
+    <div class="flex-1 flex justify-end footer-links">
+      <a href="#" class="footer-link">LinkedIn</a>
+      <a href="#" class="footer-link">Privacidade</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>
